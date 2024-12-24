@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="src/styles/posts.css">
+    <script src="src/js/posts.js"></script>
+    <title>Posts</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Menu</h3>
+            </div>
+            <ul class="sidebar-links">
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </aside>
+
+        <div class="body-container">
+
+            <div class="top">
+                <nav class="nav">
+                    <div class="nav-bar">
+                        <div class="nav-title">
+                            <h2>Social-Hub</h2>
+                        </div>
+
+                        <div class="nav-right">
+                            <h2>welcome back,bharath <i class="fas fa-user"></i></h2>
+                        </div>
+
+
+                    </div>
+
+                </nav>
+
+            </div>
+
+            <div class="middle">
+                <div class="search-sort">
+                    <div class="nav-search">
+                        <input type="search" placeholder="search posts..." class="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="sortBy">
+                        <select name="" id="dropdown-sortBy">
+                            <option value="">--sort By--</option>
+                            <option value="likes">Likes</option>
+                            <option value="dislikes">Dislikes</option>
+                        </select>
+                        <input type="checkbox" name="" id="asc-check">
+                        <label for="">ascending</label>
+                        <input type="checkbox" name="" id="desc-check">
+                        <label for="">descending</label>
+                        <button id="sort-button">Sort</button>
+
+                    </div>
+
+                </div>
+                <div id="delete-confirmation" class="delete-confirmation" style="display: none;">
+                    <p id="delete-confirmation">Are you sure you want to delete this post?</p>
+                    <div class="btn">
+                        <button id="yes-btn">Yes</button>
+                        <button id="no-btn">No</button>
+                    </div>
+                </div>
+                <div id="cards-container"></div>
+            </div>
+            <div class="bottom">
+                <footer>
+                    <p>&copy; 2024 Social-Hub | All rights reserved</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

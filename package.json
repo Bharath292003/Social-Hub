@@ -1,0 +1,17 @@
+{
+  "name": "my-web-app",
+  "version": "1.0.0",
+  "description": "A new web application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^2.6.4"
+  },
+  "author": "",
+  "license": "ISC"
+}
