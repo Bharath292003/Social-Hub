@@ -16,45 +16,52 @@ document.addEventListener("DOMContentLoaded", async () => {
             renderAllPosts(searchedPosts);
         }
     });
+    const likesDiv = document.getElementById("likes-div");
+    const dislikesDiv = document.getElementById("dislikes-div");
+    const likesArrowUp = document.getElementById("likes-arrow-up");
+    const likesArrowDown = document.getElementById("likes-arrow-down");
+    const dislikesArrowUp = document.getElementById("dislikes-arrow-up");
+    const dislikesArrowDown = document.getElementById("dislikes-arrow-down");
+    const reset = document.getElementById("reset");
 
-    const sortButton = document.getElementById('sort-button');
-    const ascCheckbox = document.getElementById('asc-check');
-    const descCheckbox = document.getElementById('desc-check');
-    ascCheckbox.addEventListener('click', () => {
-        descCheckbox.checked = false;
-    })
-    descCheckbox.addEventListener('change', () => {
-        ascCheckbox.checked = false;
-    })
-    sortButton.addEventListener('click', async () => {
-        const sortByDropdown = document.getElementById('dropdown-sortBy');
-        const sortBy = sortByDropdown.value.toLowerCase();
-
-        let order = '';
-        if (ascCheckbox.checked) {
-            console.log('hi');
-            order = 'asc';
-            descCheckbox.checked = false;
-        } else if (descCheckbox.checked) {
-            order = 'desc';
-            ascCheckbox.checked = false;
-        }
-
-        if (sortBy && order) {
-            // const sortedPosts = await fetchSortPosts(sortBy, order);
-            const sortedPosts = await fetchAllPosts();
-            if (sortBy === 'likes' || sortBy === 'dislikes') {
-                sortedPosts.sort((post1, post2) => {
-                    const val1 = post1.reactions[sortBy];
-                    const val2 = post2.reactions[sortBy];
-                    console.log(val1, val2);
-                    return order === 'asc' ? val1 - val2 : val2 - val1;
-                });
-            }
-            console.log('sorted', sortedPosts);
-            renderAllPosts(sortedPosts);
-        }
+    likesDiv.addEventListener("click", () => {
+        handleSort("likes", likesArrowUp, likesArrowDown);
     });
+
+    dislikesDiv.addEventListener("click", () => {
+        handleSort("dislikes", dislikesArrowUp, dislikesArrowDown);
+    });
+    reset.addEventListener("click", () => {
+        renderAllPosts();
+        likesArrowUp.style.display = 'inline';
+        dislikesArrowUp.style.display = 'inline';
+        likesArrowDown.style.display = 'none';
+        dislikesArrowDown.style.display = 'none';
+    })
+    let currentSort = { type: "", order: "" };
+    async function fetchAndSortPosts(sortBy, order) {
+        const posts = await fetchAllPosts();
+        if (sortBy === "likes" || sortBy === "dislikes") {
+            posts.sort((post1, post2) => {
+                const val1 = post1.reactions[sortBy];
+                const val2 = post2.reactions[sortBy];
+                return order === "asc" ? val1 - val2 : val2 - val1;
+            });
+        }
+        renderAllPosts(posts);
+    }
+    function handleSort(sortBy, arrowUp, arrowDown) {
+        const newOrder = currentSort.order === "asc" ? "desc" : "asc";
+        currentSort = { type: sortBy, order: newOrder };
+        if (newOrder === "asc") {
+            arrowUp.style.display = "inline";
+            arrowDown.style.display = "none";
+        } else {
+            arrowUp.style.display = "none";
+            arrowDown.style.display = "inline";
+        }
+        fetchAndSortPosts(sortBy, newOrder);
+    }
 });
 
 function printToastMessage(error) {
@@ -67,25 +74,13 @@ function printToastMessage(error) {
         backgroundColor: "linear-gradient(to right, #dc3545, #c82333)",
     }).showToast();
 }
-
-// async function fetchCommon(api) {
-//     try {
-//         const response = await fetch(api);
-//         if (!response.ok) {
-//             throw new Error("cant fetch data");
-//         }
-//         return response.json();
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
 async function fetchAllPosts() {
     try {
-        const response1 = await fetch('https://dummyjson.com/posts');
-        if (!response1.ok) {
+        const response = await fetch('https://dummyjson.com/posts');
+        if (!response.ok) {
             throw new Error("Failed to fetch post data.");
         }
-        const data = await response1.json();
+        const data = await response.json();
         return data.posts;
     } catch (error) {
         printToastMessage(error.message);
@@ -96,11 +91,11 @@ async function fetchAllPosts() {
 async function fetchSearchedPosts(query) {
     try {
 
-        const response2 = await fetch(`https://dummyjson.com/posts/search?q=${query}`);
-        if (!response2.ok) {
+        const response = await fetch(`https://dummyjson.com/posts/search?q=${query}`);
+        if (!response.ok) {
             throw new Error(`Failed to fetch posts for Search`);
         }
-        const data = await response2.json();
+        const data = await response.json();
         console.log('data', data)
         return data.posts;
     } catch (error) {
@@ -112,11 +107,11 @@ async function fetchSortPosts(sortBy, order) {
     // console.log(sortBy, order);
     try {
 
-        const response3 = await fetch(`https://dummyjson.com/posts?sortBy=${sortBy}&order=${order}`);
-        if (!response3.ok) {
+        const response = await fetch(`https://dummyjson.com/posts?sortBy=${sortBy}&order=${order}`);
+        if (!response.ok) {
             throw new Error(`Failed to fetch posts for query: ${sortBy}`);
         }
-        const data = await response3.json();
+        const data = await response.json();
         return data.posts;
     } catch (error) {
         console.log('sort-error', error);
@@ -125,13 +120,13 @@ async function fetchSortPosts(sortBy, order) {
 async function deletePostsbyId(postId) {
     try {
 
-        const response4 = await fetch(`https://dummyjson.com/postss/${postId}`, {
+        const response = await fetch(`https://dummyjson.com/posts/${postId}`, {
             method: 'DELETE',
         });
-        if (!response4.ok) {
+        if (!response.ok) {
             throw new Error(`Failed to delete post with id: ${postId}`);
         }
-        const data = await response4.json();
+        const data = await response.json();
         return data.posts;
     } catch (error) {
         printToastMessage(error.message);

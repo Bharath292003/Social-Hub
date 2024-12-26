@@ -188,9 +188,20 @@ nav {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     text-align: center;
     margin-left: 20px;
+}
+
+.sortBy #likes-div {
+    margin-right: 0.7rem;
+    margin-left: 0.7rem;
+    cursor: pointer;
+}
+
+.sortBy #dislikes-div {
+    cursor: pointer;
+    margin-right: 1.5rem;
 }
 
 .search-sort #sort-button {
