@@ -1,7 +1,5 @@
 "use strict"
 document.addEventListener("DOMContentLoaded", async () => {
-
-
     renderAllPosts();
 
     const searchInput = document.querySelector('.searchInput');
@@ -9,11 +7,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const query = searchInput.value.toLowerCase();
 
         if (query === '') {
+            document.getElementById('no-results').textContent = '';
             renderAllPosts();
         } else {
             const searchedPosts = await fetchSearchedPosts(query);
-            console.log('searchedposts', searchedPosts);
-            renderAllPosts(searchedPosts);
+            if (searchedPosts.total === 0) {
+                document.getElementById('no-results').textContent = 'No search results found☹️!';
+            }
+            console.log('searchedposts', searchedPosts.posts);
+            renderAllPosts(searchedPosts.posts);
         }
     });
     const likesDiv = document.getElementById("likes-div");
@@ -64,14 +66,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-function printToastMessage(error) {
+function printToastMessage(error, backgroundColor) {
     Toastify({
         text: `${error}`,
-        duration: 2000,
+        duration: 2500,
         gravity: "top",
         position: "right",
         className: "toastify",
-        backgroundColor: "linear-gradient(to right, #dc3545, #c82333)",
+        backgroundColor: `${backgroundColor}`,
     }).showToast();
 }
 async function fetchAllPosts() {
@@ -90,12 +92,13 @@ async function fetchFromEndPoint(url) {
         return response.json();
     }
     catch (error) {
-        printToastMessage(error.message);
+        printToastMessage(error.message, "linear-gradient(to right, #dc3545, #c82333)");
     }
 }
 async function fetchSearchedPosts(query) {
     const response = await fetchFromEndPoint(`https://dummyjson.com/posts/search?q=${query}`);
-    return response.posts;
+    console.log('response', response);
+    return response;
 }
 
 async function fetchSortPosts(sortBy, order) {
@@ -125,6 +128,7 @@ async function renderAllPosts(postsToRender) {
         title.textContent = post.title;
 
         const body = document.createElement('p');
+        body.className = 'text-muted '
         body.textContent = post.body;
 
         const likes = document.createElement('span');
@@ -145,9 +149,8 @@ async function renderAllPosts(postsToRender) {
             removeConfirm.style.display = 'block';
             yesBtn.addEventListener('click', async () => {
                 await deletePostsbyId(post.id);
-
                 cardContainer.removeChild(card);
-
+                printToastMessage('post deleted successfully', "linear-gradient(to right,rgb(77, 179, 26),rgb(69, 185, 11))");
                 removeConfirm.style.display = 'none';
 
             })
