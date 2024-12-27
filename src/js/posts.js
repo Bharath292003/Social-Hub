@@ -75,73 +75,51 @@ function printToastMessage(error) {
     }).showToast();
 }
 async function fetchAllPosts() {
+
+    const response = await fetchFromEndPoint('https://dummyjson.com/posts');
+    return response.posts;
+
+}
+
+async function fetchFromEndPoint(url) {
     try {
-        const response = await fetch('https://dummyjson.com/posts');
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error("Failed to fetch post data.");
         }
-        const data = await response.json();
-        return data.posts;
-    } catch (error) {
+        return response.json();
+    }
+    catch (error) {
         printToastMessage(error.message);
     }
-
 }
-
 async function fetchSearchedPosts(query) {
-    try {
-
-        const response = await fetch(`https://dummyjson.com/posts/search?q=${query}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch posts for Search`);
-        }
-        const data = await response.json();
-        console.log('data', data)
-        return data.posts;
-    } catch (error) {
-        printToastMessage(error.message);
-    }
+    const response = await fetchFromEndPoint(`https://dummyjson.com/posts/search?q=${query}`);
+    return response.posts;
 }
 
 async function fetchSortPosts(sortBy, order) {
-    // console.log(sortBy, order);
-    try {
-
-        const response = await fetch(`https://dummyjson.com/posts?sortBy=${sortBy}&order=${order}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch posts for query: ${sortBy}`);
-        }
-        const data = await response.json();
-        return data.posts;
-    } catch (error) {
-        console.log('sort-error', error);
-    }
+    const response = await fetchFromEndPoint(`https://dummyjson.com/posts?sortBy=${sortBy}&order=${order}`);
+    return response.posts;
 }
 async function deletePostsbyId(postId) {
-    try {
 
-        const response = await fetch(`https://dummyjson.com/posts/${postId}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to delete post with id: ${postId}`);
-        }
-        const data = await response.json();
-        return data.posts;
-    } catch (error) {
-        printToastMessage(error.message);
-    }
+    const response = await fetchFromEndPoint(`https://dummyjson.com/posts/${postId}`, {
+        method: 'DELETE',
+    });
+    return response.posts;
+
 }
 
 async function renderAllPosts(postsToRender) {
-    const cardContainer = document.getElementById('cards-container');
+    const cardContainer = document.getElementById('custom-cards-container');
     cardContainer.innerHTML = '';
 
     const posts = postsToRender ? postsToRender : await fetchAllPosts();
 
     posts.forEach(post => {
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'card custom-card';
 
         const title = document.createElement('h2');
         title.textContent = post.title;
@@ -162,8 +140,8 @@ async function renderAllPosts(postsToRender) {
 
         deleteIcon.addEventListener('click', () => {
             const removeConfirm = document.getElementById('delete-confirmation');
-            const yesBtn = document.getElementById('yes-btn');
-            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('custom-yes-btn');
+            const noBtn = document.getElementById('custom-no-btn');
             removeConfirm.style.display = 'block';
             yesBtn.addEventListener('click', async () => {
                 await deletePostsbyId(post.id);
